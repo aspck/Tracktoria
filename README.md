@@ -9,3 +9,5 @@ Features implemented:
 * Support for arbitrary number of tracks
 
 Ultimately the performance was too poor for a real-time application. It would be better to implement a simple MIDI -> 6581 adapter with a PIC microcontroller and use an established MIDI tracker software, but it was a fun experiment.
+
+![concept](https://github.com/aspck/Tracktoria/blob/master/Tracktoria-GUI/Img/concept.png)
