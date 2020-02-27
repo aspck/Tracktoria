@@ -1,0 +1,177 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Tracktoria" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="Tracktoria.MainWindow"
+        Title="Tracktoria &lt;version 0.9.99.9.&gt;" Height="880" Width="900" Cursor="Arrow" Background="White"
+        Loaded="Window_Loaded">
+    <Window.Resources>
+        <Color x:Key="PianoKeyColor">#FFFFFFC8</Color>
+        <SolidColorBrush x:Key="PianoKey" Color="{DynamicResource PianoKeyColor}"/>
+        <Color x:Key="PanelBGColor">#FF677E66</Color>
+        <SolidColorBrush x:Key="PanelBG" Color="{DynamicResource PanelBGColor}"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Black" Offset="0"/>
+                <GradientStop Color="White" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="220*"/>
+            <RowDefinition Height="529*"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Image Source="Img/banner.png" Margin="7,-4,7,0" Height="170" VerticalAlignment="Top"/>
+        <UniformGrid x:Name="keyboard" HorizontalAlignment="stretch" Margin="1,0,0,0" Grid.Row="2" Rows="1"/>
+
+
+        <Grid HorizontalAlignment="stretch" Margin="0" Grid.Row="1" VerticalAlignment="stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="385*"/>
+                <RowDefinition Height="118*"/>
+                <RowDefinition Height="26*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="151*"/>
+                <ColumnDefinition Width="72*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="1" Margin="2" Grid.Row="1" Background="Black" BorderBrush="Black" BorderThickness="2" Grid.RowSpan="2">
+                <DockPanel Background="{StaticResource PanelBG}">
+                    <Menu DockPanel.Dock="Top" VerticalAlignment="Top" >
+                        <TextBlock Text="Console"/>
+                        <CheckBox x:Name="debugger" Content="Debug" IsChecked="True" Checked="debugger_Checked" Unchecked="debugger_Checked"/>
+                        <MenuItem x:Name="menu_openPort" Header="Open Port ..." MouseEnter="getCOMPorts"/>
+                        <Button x:Name="btn_closePort" HorizontalAlignment="Right" Content="Close Port" Margin="0,0,0,0" Click="btn_closePort_Click" />
+                    </Menu>
+                    <ScrollViewer >
+                        <TextBlock x:Name="console_txtbox" Foreground="#FF2E2E2E" DockPanel.Dock="Bottom"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="1" Margin="2" Background="Black" BorderBrush="Black" BorderThickness="2">
+                <DockPanel Background="{StaticResource PanelBG}">
+                    <Menu  DockPanel.Dock="Top" VerticalAlignment="Top">
+                        <TextBlock Text="Instruments"/>
+                        <Separator Background="#FF1B1B1B" BorderBrush="Black" Foreground="White"/>
+                        <MenuItem x:Name="menu_openInstrument" Header="Open" HorizontalAlignment="Right" MouseEnter="getInstruments"  />
+                        <MenuItem x:Name="menu_saveInstrument" Header="Save" HorizontalAlignment="Right" Click="menu_saveInstrument_Click"/>
+                        <TextBox x:Name="instrumentTxt" Width="70"/>
+                    </Menu>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="167*"/>
+                            <ColumnDefinition Width="168*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="151*"/>
+                            <RowDefinition Height="137*"/>
+                            <RowDefinition Height="63*"/>
+                        </Grid.RowDefinitions>
+                        <Rectangle Grid.ColumnSpan="2">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <LinearGradientBrush.RelativeTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                            <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </LinearGradientBrush.RelativeTransform>
+                                    <GradientStop Color="#FF000802" Offset="0"/>
+                                    <GradientStop Color="#FF022E0C" Offset="0.449"/>
+                                    <GradientStop Color="#FF000802" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Canvas x:Name="ADSRdisplay" Margin="20,5" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5">
+                            <Canvas.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleY="-1" ScaleX="1"/>
+                                    <SkewTransform AngleY="0" AngleX="0"/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Canvas.RenderTransform>
+                            <Line x:Name="attackLine"  Stroke="#FF2CD12C" Canvas.Top="15" X2="70" Margin="0" Width="75" Height="110" VerticalAlignment="Top" Y2="105" StrokeThickness="3" Y1="5" StrokeLineJoin="Round" StrokeEndLineCap="Round"/>
+                            <Line x:Name="decayLine" Canvas.Left="70" Stroke="#FF2CD12C" Canvas.Top="15" X2="70" Margin="0" Width="80" Height="110" VerticalAlignment="Top" Y2="55" Y1="105" StrokeThickness="3"/>
+                            <Line x:Name="sustainLine" Canvas.Left="153" Stroke="#FF2CD12C" Canvas.Top="15" X2="50" Margin="0" Width="50" Height="110" VerticalAlignment="Top" Y2="50" Y1="50" StrokeThickness="3"/>
+                            <Line x:Name="releaseLine" Canvas.Left="202" Stroke="#FF2CD12C" Canvas.Top="15" X2="50" Margin="0" Width="50" Height="110" VerticalAlignment="Top" Y1="50" StrokeThickness="3" Y2="5"/>
+                        </Canvas>
+                        <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="False">
+                            <Border DockPanel.Dock="Top" BorderThickness="1" CornerRadius="1" BorderBrush="Black" Margin="1" Height="20">
+                                <TextBlock Text="Waveform" Margin="5,0,0,0" VerticalAlignment="Top" Height="20" Grid.Row="1" HorizontalAlignment="Center" />
+                            </Border>
+                            <StackPanel Margin="0" Grid.Row="1" DockPanel.Dock="Top">
+                                <RadioButton x:Name="sqbutton" DockPanel.Dock="Top" Content="Square" FlowDirection="RightToLeft" HorizontalContentAlignment="Right" Margin="10,0,5,0" IsChecked="True" Checked="sqbutton_Checked"/>
+                                <RadioButton x:Name="trbutton" DockPanel.Dock="Top" Content="Triangle" FlowDirection="RightToLeft" HorizontalContentAlignment="Right" Margin="10,0,5,0" Checked="trbutton_Checked"/>
+                                <RadioButton x:Name="swbutton" DockPanel.Dock="Top" Content="Saw" FlowDirection="RightToLeft" HorizontalContentAlignment="Right" Margin="10,0,5,0" Checked="swbutton_Checked"/>
+                                <RadioButton x:Name="nobutton" DockPanel.Dock="Top" Content="Noise" FlowDirection="RightToLeft" HorizontalContentAlignment="Right" Margin="10,0,5,0" Checked="nobutton_Checked"/>
+                                <TextBlock Height="15" TextWrapping="Wrap" Text="Pulse width" HorizontalAlignment="Center"/>
+                                <Slider x:Name="pwSlider" Minimum="1" Maximum="4094"/>
+                                <TextBlock x:Name="pwLabel" Height="20" TextWrapping="Wrap" Text="0%" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </DockPanel>
+                        <DockPanel Grid.Row="1" LastChildFill="False">
+                            <Border DockPanel.Dock="Top" BorderThickness="1" CornerRadius="1" BorderBrush="Black" Margin="1" Height="20">
+                                <TextBlock Text="Envelope" Margin="5,0,0,0" VerticalAlignment="Top" Height="20" Grid.Row="1" HorizontalAlignment="Center" />
+                            </Border>
+                            <StackPanel Margin="10,0,0,0" VerticalAlignment="Top">
+                                <TextBlock Height="20" TextWrapping="Wrap" Text="Attack"/>
+                                <TextBlock Height="20" TextWrapping="Wrap" Text="Decay"/>
+                                <TextBlock Height="20" TextWrapping="Wrap" Text="Sustain"/>
+                                <TextBlock Height="20" TextWrapping="Wrap" Text="Release"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,10,0" HorizontalAlignment="Left" DockPanel.Dock="Right" Width="70" VerticalAlignment="Top">
+                                <ComboBox x:Name="Abox" Height="20"  HorizontalContentAlignment="Right" SelectedIndex="10"/>
+                                <ComboBox x:Name="Dbox" Height="20"  HorizontalContentAlignment="Right" SelectedIndex="8"/>
+                                <ComboBox x:Name="Sbox" Height="20" HorizontalContentAlignment="Right" SelectedIndex="10"/>
+                                <ComboBox x:Name="Rbox" Height="20" HorizontalContentAlignment="Right" SelectedIndex="8"/>
+                            </StackPanel>
+                        </DockPanel>
+
+
+                        <RadioButton x:Name="lpbtn" Content="Lo-pass"   Grid.ColumnSpan="2" Margin="10,0,20,0" VerticalAlignment="Center" Grid.Row="2" HorizontalAlignment="Left" Checked="lpbtn_Checked" />
+                        <RadioButton x:Name="bpbtn" Content="Bandpass"  Grid.ColumnSpan="2" Margin="0" VerticalAlignment="Center" Grid.Row="2" HorizontalAlignment="Center" Checked="bpbtn_Checked" />
+                        <RadioButton x:Name="hpbtn" Content="Hi-pass" Grid.ColumnSpan="2" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Row="2" HorizontalAlignment="Right" Checked="hpbtn_Checked" />
+
+                        <TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Frequency" Margin="10,0,0,2"/>
+                        <Slider x:Name="freqslider" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,2" Width="60" Maximum="2048" ValueChanged="Slider_ValueChanged"/>
+                        <Border Grid.ColumnSpan="2"  DockPanel.Dock="Bottom" BorderThickness="1" CornerRadius="1" BorderBrush="Black" Margin="1" Grid.Row="2" VerticalAlignment="Top" Height="20">
+                            <CheckBox x:Name="filtBox" Content="Filter" Margin="98,0,123,-2" Grid.Row="1" HorizontalAlignment="Center" FlowDirection="RightToLeft" Height="20" VerticalAlignment="Top" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" Width="55"/>
+                        </Border>
+                        <Slider x:Name="resslider" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,2" Width="60" Maximum="15" ValueChanged="Slider_ValueChanged_1"/>
+                        <TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Resonance" Grid.Column="1" Margin="10,0,0,2"/>
+                    </Grid>
+                </DockPanel>
+            </Border>
+            <Border Margin="2" Grid.RowSpan="2" Background="Black" BorderBrush="Black" BorderThickness="2">
+                <DockPanel LastChildFill="False" Background="{DynamicResource PanelBG}">
+                    <Menu DockPanel.Dock="Top" VerticalAlignment="Top" >
+                        <TextBlock Text="Track Editor"/>
+                        <Separator Background="#FF1B1B1B" BorderBrush="Black" Foreground="White"/>
+                        <Button Content="New Track" HorizontalAlignment="Left" Margin="100,0,0,0" Click="newtrackbutton_Click" />
+                        <TextBlock Text="Track Length: "/>
+                        <TextBox x:Name="numColumns" Text="8" BorderThickness="1" BorderBrush="Black" Width="20"/>
+
+                    </Menu>
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+                        <StackPanel x:Name="trackViewer" DockPanel.Dock="Top"/>
+                    </ScrollViewer>
+
+                </DockPanel>
+            </Border>
+            <Menu Margin="0" Grid.Row="2">
+                <Button x:Name="playbutton" Content="[PLAY]" Margin="10,0,0,0" Click="playbutton_Click" />
+                <Button x:Name="stopbutton" Content="[STOP]" Margin="10,0,0,0" Click="stopbutton_Click" />
+                <TextBlock Padding="40,0,0,0">BPM:</TextBlock>
+                <TextBox x:Name="bpmBox" Width="30" Text="128" Padding="0,0,0,0"/>
+            </Menu>
+        </Grid>
+        <Image VerticalAlignment="Bottom" Source="Img/6581sid.png" Margin="83,0,79,0" Height="55"/>
+    </Grid>
+</Window>
